@@ -5,7 +5,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Install some basic tools we're going to need to build the simulator.
 # Put this first so local docker will cache this step before copying in the code that
 # will get built.  This saves a lot of time on Windows development hosts.
-RUN apt-get update && apt-get install -y git autoconf-archive pkg-config build-essential automake gcc libssl-dev wget && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y git autoconf-archive pkg-config build-essential automake gcc libssl-dev wget libjson-c-dev libcurl4-openssl-dev pkg-config uuid-dev xxd && rm -rf /var/lib/apt/lists/*
 
 # Install .NET 6
 # apt-get supports x64 but not arm yet. So, we use the script.
@@ -62,3 +62,21 @@ RUN pip install --no-cache-dir gcovr
 
 # Symlink /tpm2-simulator to the openssl1 one, for convenience of users who just want "a" simulator.
 RUN ln -s /simulators/openssl1/Simulator/src/tpm2-simulator /tpm2-simulator
+
+# tpm2-tss installation
+RUN wget https://github.com/tpm2-software/tpm2-tss/releases/download/4.1.3/tpm2-tss-4.1.3.tar.gz && \
+    tar -xzvf tpm2-tss-4.1.3.tar.gz && \
+    cd tpm2-tss-4.1.3/ && \
+    ./configure && \
+    make install && \
+    ldconfig
+
+# tpm2-tools installation
+RUN wget https://github.com/tpm2-software/tpm2-tools/releases/download/5.7/tpm2-tools-5.7.tar.gz && \
+    tar -xzvf tpm2-tools-5.7.tar.gz && \
+    cd tpm2-tools-5.7/ && \
+    ./configure && \
+    make install
+
+# TPM EK cert generator
+RUN git clone -b tpm_platform https://github.com/soelangen/tpm2_ek_cert_generator.git
