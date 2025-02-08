@@ -79,4 +79,4 @@ RUN wget https://github.com/tpm2-software/tpm2-tools/releases/download/5.7/tpm2-
     make install
 
 # TPM EK cert generator
-RUN git clone -b tpm_platform https://github.com/soelangen/tpm2_ek_cert_generator.git
+RUN git clone https://github.com/stefano-garzarella/tpm2_ek_cert_generator
